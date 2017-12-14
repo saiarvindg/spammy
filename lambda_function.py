@@ -1,5 +1,4 @@
 from __future__ import print_function
-from boto3.dynamodb.conditions import Key, Attr
 import boto3
 import datetime
 
@@ -7,6 +6,7 @@ import datetime
 # --------------- Helpers that build all of the responses ----------------------
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
+    print("Line 9: output: " + str(output))
     return {
         'outputSpeech': {
             'type': 'SSML',
@@ -20,7 +20,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'reprompt': {
             'outputSpeech': {
                 'type': 'SSML',
-                'ssml': reprompt_text
+                'ssml': '<speak>' + str(reprompt_text) + '</speak>'
             }
         },
         'shouldEndSession': should_end_session
@@ -37,7 +37,7 @@ def build_response(session_attributes, speechlet_response):
 # --------------- Interacting with other AWS services ------------------
 
 def email_user(subject,body,from_addr,to_addr):
-    currdatetime = datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+    currdatetime = datetime.datetime.now().strftime("%I:%M%p (UTC) on %B %d, %Y")
     sesclient = boto3.client('ses')
     response = sesclient.send_email(
         Source=from_addr,
@@ -59,10 +59,11 @@ def email_user(subject,body,from_addr,to_addr):
         ReplyToAddresses=[from_addr])
     print("Line 67: send_email: " + str(response))
 
-# only method that directly returns a build_response
+# only function that directly returns a build_response
 def get_spam_nums():
     nums = ''
-    txtmsg = 'AWS Spam report @ ' + datetime.datetime.now().strftime("%I:%M%p) + ':\nNumber: Count\n'
+    currtime = datetime.datetime.now().strftime("%I:%M%p")
+    txtmsg = 'AWS Spam report @ ' + currtime + ' (UTC):\nNumber: Count\n'
     emailmsg = 'AWS Spam Report\n'
     dd = boto3.resource('dynamodb', region_name = 'us-east-1')
     table = dd.Table('User1Spam')
@@ -70,14 +71,10 @@ def get_spam_nums():
     numCount = int(response['Count'])
         
     for idx, item in enumerate(response['Items']):
-        #spamnum = '<say-as interpret-as="digits">' + str(item['SpamNumber']) + '</say-as>'
-        #spamnum_count = '<say-as interpret-as="digits">' +  str(item['Count']) + '</say-as>'
         spamnum = str(item['SpamNumber']) 
         spamcount = str(item['Count'])
         txtmsg += spamnum + ': ' + spamcount + '\n'
         emailmsg += spamnum + ' called you ' + spamcount + ' times\n' 
-        #nums += spamnum + ' called you ' + spamnum_count + ' times, '
-    #return nums
     
     # Send a text if there are less than 6 spam numbers using SNS
     if numCount < 6:
@@ -88,7 +85,6 @@ def get_spam_nums():
         return build_response({}, build_speechlet_response("Get Spam Numbers", "I've sent a text message to you", None, True))
     else:
         # if there are more than 6 spam numbers send them an email using SES
-        #emailmsg += '</ul></body></html>'
         email_user("Spam Number Report from AWS",emailmsg, "sai.arvindg@gmail.com", "saiarvindg@yahoo.com")
         return build_response({}, build_speechlet_response("Get Spam Numbers", "I've sent an email to you.", None, True))
         
@@ -126,7 +122,6 @@ def add_num(num):
         
         # if num already exists - update the count
         if response > 0:
-            #old_count = response['Item']['Count']
             new_count = response + 1
             table.put_item(
                 Item={
@@ -175,13 +170,8 @@ def delete_num(num):
 # --------------- Functions that control the skill's behavior ------------------
     
 def get_welcome_response():
-    """ If we wanted to initialize the session to have some attributes we could
-    add those here
-    """
-
     session_attributes = {}
     card_title = "Welcome"
-    #speech_output = "The spam numbers and counts are " + get_spam_nums()
     speech_output = "What spam issues can I help you with today?"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
@@ -336,8 +326,8 @@ def lambda_handler(event, context):
     prevent someone else from configuring a skill that sends requests to this
     function.
     """
-    #if (event['session']['application']['applicationId'] != " amzn1.ask.skill.d7affff1-133b-41b1-a6ac-ab429f02d4b9"):
-     #   raise ValueError("Invalid Application ID")
+    if (event['session']['application']['applicationId'] != "amzn1.ask.skill.d7affff1-133b-41b1-a6ac-ab429f02d4b9"):
+        raise ValueError("Invalid Application ID")
 
     if event['session']['new']:
         on_session_started({'requestId': event['request']['requestId']},
