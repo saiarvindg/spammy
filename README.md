@@ -10,7 +10,7 @@ Spammy is an Alexa Skill to keep track of spam numbers.
 I wanted a way to keep track of all the spam numbers that called me. Sometimes the same spam number keep calling me and I can't always remember the specific number off the top of my head. So I can just tell Alexa which spam number called me and Alexa will keep track of the number for me.
 
 ## Components
-#### Amazon Alexa 
+#### Alexa Skill Kit
 A user can ask Alexa to either add a number, delete a number, get a number, or send a spam report/summary. The invocation name is "Spammy".
 Examples:
 > "Alexa ask Spammy to add 5555555555 as a spam number"
@@ -24,7 +24,7 @@ Examples:
 #### AWS Lambda
 The Alexa Skill Kit triggers an AWS Lambda function. The Lambda function calls all other AWS services and processes.
 
-#### Amazon DynamoDB
+#### DynamoDB
 All the numbers and their respective counts are stored in DynamoDB.
 
 #### Amazon Simple Notification Service (SNS)
