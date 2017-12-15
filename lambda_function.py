@@ -196,7 +196,10 @@ def get_spam_num_count_request(intent, session):
             speech_output = "That number has not called you yet."
             should_end_session = True
         else:
-            speech_output = "That number has called you " + str(response) + " times"
+            if int(response) == 1:
+                speech_output = "That number has called you " + str(response) + " time"
+            else:
+                speech_output = "That number has called you " + str(response) + " times"
             should_end_session = True
     else:
         speech_output = "Sorry, I didn't understand. Please try again. Make sure the number is only 10 digits"
@@ -321,11 +324,7 @@ def lambda_handler(event, context):
     print("event.session.application.applicationId=" +
           event['session']['application']['applicationId'])
 
-    """
-    Uncomment this if statement and populate with your skill's application ID to
-    prevent someone else from configuring a skill that sends requests to this
-    function.
-    """
+
     if (event['session']['application']['applicationId'] != "amzn1.ask.skill.d7affff1-133b-41b1-a6ac-ab429f02d4b9"):
         raise ValueError("Invalid Application ID")
 
