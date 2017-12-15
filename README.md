@@ -50,6 +50,7 @@ My next steps are to implement a rudimentary multi-user system using the `userId
 1. Create an IAM role with the following policies (shown in the screenshot below)
 
 ![](https://github.com/saiarvindg/spammy/blob/master/SpammyAlexRolePolicies.png)
+
 2. Create a blank Lambda Function and copy and paste the code in `lambda_function.py` into the Lambda function body.
 
 3. Create an Alexa Skill by following the directions in the Amazon Developer Portal (https://developer.amazon.com/alexa-skills-kit)
