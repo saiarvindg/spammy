@@ -47,3 +47,12 @@ While I theoretically I understood that serverless computing was useful, I never
 My next steps are to implement a rudimentary multi-user system using the `userId` field I discovered (too late). Then create phrases the user can speak to Alexa to input their email address and phone number. Finally, I want to integrate this service into a smartphone app that has access to call logs and incoming calls to provide instant feedback on whether the incoming call is a number the user classified as spam.
 
 ## Setting up and running the project
+1. Create an IAM role with the following policies (shown in the screenshot below)
+
+![](https://github.com/saiarvindg/spammy/blob/master/SpammyAlexRolePolicies.png)
+2. Create a blank Lambda Function and copy and paste the code in `lambda_function.py` into the Lambda function body.
+3. Create an Alexa Skill by following the directions in the Amazon Developer Portal (https://developer.amazon.com/alexa-skills-kit)
+4. When you get to the step that requires the Intent Schema for Alexa, copy and paste the schema in `alexa-intent-schema.json` into the Intent Schema box.
+5. Finish the Alexa skill configuration step by selecting `AWS Lambda ARN (Amazon Resource Name)` as the Service Endpoint Type and set the Lambda function's ARN as Default Endpoint. Then procede to the Test stage to enable developer testing.
+6. Go into the AWS Console and open up Simple Email Service. Go to `Email Addresses` section and click `Verify a New Email Address`. Verify two email addresses and replace my email addresses in `lambda_function.py` to yours.
+7. At this point, everything should be setup and you are ready to use Spammy. Follow the sample utterances mentioned earlier to test.
