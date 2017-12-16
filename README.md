@@ -2,7 +2,7 @@
 Spammy is an Alexa Skill to keep track of spam numbers.
 
 ## Deliverables
-[Demo Video](https://www.youtube.com)
+[Demo Video](https://youtu.be/8EwzyTx-ky0)
 
 [Archtecture Diagram](https://github.com/saiarvindg/spammy/blob/master/SpammyFinalArch.png)
 
@@ -37,14 +37,14 @@ Similar to the SNS component, however if there are six or more records in ther u
 Initially, I wanted to implement a central database table that would store the numbers and count of all number reported by users. However, when I was designing the schema I thought I could use one table for all users by using a map of the user to another map or tuple of the phone number and count. This implementation would allow me to use one table for both all
 users and the central database. In turn, I would just have to perform one query (or one set of queries) to get all spam numbers across all users. However, this became more complicated than was I initially expected. So I ended using a different table for each user and using the phone number as the partition/primary key. But in the end, I scrapped the central database as users could mistakenly report a number as spam but in reality the number was not.
 
-In addition, I currently hardcod the phone numbers and email addresses of the example user (me). I wanted to the user link their Amazon account information (giving access to their email and potentially phone number), but the account linking process needed several different resources and services for essentially two pieces of information. I think this issue could be solved by having a the user speak their email address and phone number directly to Alexa and store it in the database. But the email addresses would have to be verified before they are used.
+In addition, I currently hardcode the phone numbers and email addresses of the example user (me). I wanted the user to link their Amazon account information (giving access to their email and potentially phone number), but the account linking process needed several different resources and services for essentially two pieces of information. I think this issue could be solved by having a the user speak their email address and phone number directly to Alexa and store it in the database. But the email addresses would have to be verified before they are used.
 
 Finally, I wanted to implement mutliple users but intially I could not find a way to uniquely figure out in the Lambda function which user issued a request. So I went ahead and built the application wih just one user and database to get it working. However, towards the end of the project, I realized there is a `userId` field in every Alexa request which identifies the Alexa the request came from. I could use the `userId` field to create a unique table for every users. This is a feature that can implemented easily but will be time consuming as I have to rewrite parts of the Lambda function. I can implement this feature in the future.
 
 ## What I learned and next steps
 While I theoretically I understood that serverless computing was useful, I never practially understood its usefulness until I did this project. Previously for most of my projects, I had a cloud VPC and I would host my services/server on the VPC. However, the VPC service still required configuration and could be fairly expensive for how much I acutally used it. After using (and understanding) Lambda and other AWS services, it became apparent how easy it was to just think about the code/logic instead of all the configuration. I could just code, hit run, and everything else is taken care of. And I'm only billed for the resources I use.
 
-My next steps are to implement a rudimentary multi-user system using the `userId` field I discovered (too late). Then create phrases the user can speak to Alexa to input their email address and phone number. Finally, I want to integrate this service into a smartphone app that has access to call logs and incoming calls to provide instant feedback on whether the incoming call is a number the user classified as spam.
+My next steps are to implement a rudimentary multi-user system using the `userId` field which I discovered (too late). Then create phrases the user can speak to Alexa to input their email address and phone number. Finally, I want to integrate this service into a smartphone app that has access to call logs and incoming calls to provide instant feedback on whether the incoming call is a number the user classified as spam.
 
 ## Setting up and running the project
 1. Create an IAM role with the following policies (shown in the screenshot below)
